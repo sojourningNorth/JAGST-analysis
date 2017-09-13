@@ -16,7 +16,6 @@ colnames(test_mat2) <- c('cor','uncor')
 
 test_list <- list('cor' = 1:20,'uncor' = 981:1000,'test_syntax' = 11:30)
 
-
 prof_mat <- as.matrix(prof)
 
 
@@ -37,18 +36,18 @@ cancer_cor <- rbinom(280,1,prob=expit(lin_pred_cor))
 cancer_uncor <- rbinom(280,1,prob=expit(lin_pred_uncor))
 
 ##roast_cor <- limma::roast(y= prof, index=1:100,design=cbind(rep(1,length(cancer_cor)),cancer_cor))
-# # # # # # # roast_cor <- limma::roast(y= prof, index=test_list,design=cbind(rep(1,length(cancer_cor)),cancer_cor),contrast=2,sort='none') # NOT SURE USING INDEX VECTOR CORRECTLY 
+roast_cor <- limma::roast(y= prof, index=test_list,design=cbind(rep(1,length(cancer_cor)),cancer_cor),contrast=2,sort='none') # NOT SURE USING INDEX VECTOR CORRECTLY 
 
 ##roast_uncor <- limma::roast(y= prof, index=101:200,design=cbind(rep(1,length(cancer_uncor)),cancer_uncor))
-# # # # # # roast_uncor <- limma::roast(y= prof, index=test_list,design=cbind(rep(1,length(cancer_uncor)),cancer_uncor),contrast=2,sort='none') # NOT SURE USING INDEX VECTOR CORRECTLY 
+roast_uncor <- limma::roast(y= prof, index=test_list,design=cbind(rep(1,length(cancer_uncor)),cancer_uncor),contrast=2,sort='none') # NOT SURE USING INDEX VECTOR CORRECTLY 
 
 ##camera_cor <- limma::camera(prof, seq(100),design=cbind(rep(1,length(cancer_cor)),cancer_cor))
-# # # # # # # # # camera_cor <- limma::camera(prof, test_list,design=cbind(Intercept = rep(1,length(cancer_cor)),Group = cancer_cor),contrast=2,inter.gene.cor=NA,sort=FALSE)
+camera_cor <- limma::camera(prof, test_list,design=cbind(Intercept = rep(1,length(cancer_cor)),Group = cancer_cor),contrast=2,inter.gene.cor=NA,sort=FALSE)
 ##camera_cor <- limma::camera(prof, index = 1:100,design=cbind(Intercept = rep(1,length(cancer_cor)),Group = cancer_cor),contrast=2)
 
 ##camera_uncor <- limma::camera(prof, seq(101,200),design=cbind(rep(1,length(cancer_uncor)),cancer_uncor))
 
-# # # # # # # # # camera_uncor <- limma::camera(prof, test_list ,design=cbind(Intercept = rep(1,length(cancer_uncor)),Group = cancer_uncor),contrast=2,inter.gene.cor=NA,sort=FALSE)
+camera_uncor <- limma::camera(prof, test_list ,design=cbind(Intercept = rep(1,length(cancer_uncor)),Group = cancer_uncor),contrast=2,inter.gene.cor=NA,sort=FALSE)
 
 camera_cor_ranks <- limma::camera(prof, test_list ,design=cbind(rep(1,length(cancer_uncor)),cancer_cor),contrast=2,use.ranks=T,inter.gene.cor=NA,sort=FALSE)
 
@@ -56,8 +55,8 @@ camera_uncor_ranks <- limma::camera(prof, test_list ,design=cbind(rep(1,length(c
 
 #limma::cameraPR(data2, inds_gdc(inflamm),design=smoke)
 
-# # # # # # # # safe_cor <- safe::safe(as.matrix(prof),cancer_cor,C.mat=test_mat2,Pi.mat=1000)
-# # # # # # # # safe_uncor <- safe::safe(as.matrix(prof),cancer_uncor,C.mat=test_mat2,Pi.mat=1000)
+safe_cor <- safe::safe(as.matrix(prof),cancer_cor,C.mat=test_mat2,Pi.mat=1000)
+safe_uncor <- safe::safe(as.matrix(prof),cancer_uncor,C.mat=test_mat2,Pi.mat=1000)
 
 # safe_cor@global.pval
 # safe_uncor@global.pval
@@ -77,8 +76,8 @@ camera_uncor_ranks <- limma::camera(prof, test_list ,design=cbind(rep(1,length(c
 ### END OF NEW GAGE WORK  ####
 
 
-#########tmp_res <- list('roastCor'= roast_cor,'roastUncor'= roast_uncor,'cameraCor'=camera_cor,'cameraUncor'=camera_uncor,'RcameraCor'=camera_cor_ranks,'RcameraUncor'=camera_uncor_ranks,'safeCor'=safe_cor,'safeUncor'=safe_uncor,'gageCor'=gage_cor,'gageUncor'=gage_uncor,'RgageCor'=gage_rank_cor,'RgageUncor'=gage_rank_uncor)
-tmp_res <- list('RcameraCor'=camera_cor_ranks,'RcameraUncor'=camera_uncor_ranks,'gageCor'=gage_cor,'gageUncor'=gage_uncor,'RgageCor'=gage_rank_cor,'RgageUncor'=gage_rank_uncor)
+tmp_res <- list('roastCor'= roast_cor,'roastUncor'= roast_uncor,'cameraCor'=camera_cor,'cameraUncor'=camera_uncor,'RcameraCor'=camera_cor_ranks,'RcameraUncor'=camera_uncor_ranks,'safeCor'=safe_cor,'safeUncor'=safe_uncor,'gageCor'=gage_cor,'gageUncor'=gage_uncor,'RgageCor'=gage_rank_cor,'RgageUncor'=gage_rank_uncor)
+#tmp_res <- list('RcameraCor'=camera_cor_ranks,'RcameraUncor'=camera_uncor_ranks,'gageCor'=gage_cor,'gageUncor'=gage_uncor,'RgageCor'=gage_rank_cor,'RgageUncor'=gage_rank_uncor)
 
 res_lis[[i]] <- tmp_res
 
@@ -144,12 +143,6 @@ plot(supsmu(eff_size_graph,rocam_syntax(res_lis,'roastCor',1,5,20),span=0.15,wt=
 lines(supsmu(eff_size_graph,rocam_syntax(res_lis,'roastUncor',2,5,20),span=0.4,wt=c(0.5,0.5,0.5,rep(2,17))),col='green',lwd=5)
 
 
-
-
-
-
-
-
 plot(lowess(eff_size_graph,safe_syntax(res_lis,'safeCor',1,20),f=1/2),ty='l',,lwd=5,ylim=c(0,10))
 lines(lowess(eff_size_graph,safe_syntax(res_lis,'safeUncor',2,20),f=1/2),col='purple',lwd=5)
 
@@ -164,7 +157,6 @@ library(data.table)
 library(ggplot2)
 
 dat <- data.table('-log p-value'=rocam_syntax(res_lis,'roastCor',1,5,20),"effect size of two transcripts"=eff_size_graph)
-
 
 dat <- data.table('y'=rocam_syntax(res_lis,'roastCor',1,5,20),"x"=eff_size_graph)
 
@@ -232,13 +224,6 @@ lines(lowess(eff_size_graph,safe_syntax(res_lis,'safeCor',2,20),f=1/3),col='oran
 lines(lowess(eff_size_graph,safe_syntax(res_lis,'safeUncor',1,20),f=1/3),col='blue',lwd=3)
 
 ##plot(seq(20),safe_syntax(res_lis,'safeCor',1))
-
-
-
-
-
-
-
 
 plot(lowess(seq(20),-log(unlist(lapply(res_lis,function(x){x$safeCor@global.pval[1]})))))
 plot(lowess(seq(20),-log(unlist(lapply(res_lis,function(x){x$safeCor@global.pval[2]})))))
